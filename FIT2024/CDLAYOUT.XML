@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<iso_project image_name="GAME.ISO" cue_sheet="GAME.CUE" no_xa="0">
+  <track type="data">
+    <identifiers
+      system        = "PLAYSTATION"
+      application   = "PLAYSTATION"
+      volume        = "MYDISC"
+      volume_set    = "FIT_TEST"
+      publisher     = "RODRIGO CANEK"
+      data_preparer	= "MKPSXISO"
+      copyright     = "EL GATO SOFTWARE"
+    />
+
+    <license file="LCNSFILE\LICENSEE.DAT"/>
+
+    <directory_tree>
+      <file name="SYSTEM.CNF"	type="data"	source="SYSTEM.TXT"/>
+      <file name="MAIN.EXE"	    type="data"	source="FIT2024.PS-EXE"/>
+      <file name="MODEL.BIN"    type="data" source=".\ASSETS\MODELS\MODEL.BIN"/>
+      <file name="FIT64_4.TIM"  type="data" source=".\ASSETS\TEXTURES\FIT64_4.TIM"/>
+      
+      <dummy sectors="1024"/>
+    </directory_tree>
+  </track>
+  <track type="audio" source=".\ASSETS\MUSIC\TERMINAL.WAV"/>
+  <track type="audio" source=".\ASSETS\MUSIC\WIRED.WAV"/>
+</iso_project>
