@@ -1,7 +1,7 @@
 @ECHO OFF
 
 ECHO Compiling and generating executable...
-psymake
+#psymake
 
 ECHO Building ISO file...
 MKPSXISO -y CDLAYOUT.XML

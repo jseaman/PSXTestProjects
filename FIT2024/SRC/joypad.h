@@ -36,5 +36,7 @@ void JoyPadReset(void);
 void JoyPadUpdate(void);
 
 int JoyPadCheck(int p);
+int JoyPadCheckAnalog(int port);
+void JoyPadGetAnalogState(unsigned char *A, unsigned char *B, unsigned char *C, unsigned char *D);
 
 #endif

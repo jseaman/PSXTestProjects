@@ -129,7 +129,7 @@ void Setup(void) {
   ResetNextPrim(GetCurrBuff());
 
   // Initializes the camera object
-  setVector(&camera.position, 500, -1000, -1200);
+  setVector(&camera.position, 0, 0, -1200);
   camera.lookat = (MATRIX){0};
 
   // Initialize the object initial values
@@ -140,7 +140,8 @@ void Setup(void) {
   LoadModel("\\MODEL.BIN;1");
   LoadTexture("\\FIT64_4.TIM;1");
 
-  PlayAudioTrack(2);
+  // Restore Audio Later
+  //PlayAudioTrack(2);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -157,27 +158,56 @@ void Update(void) {
   // Update the state of the controller
   JoyPadUpdate();
 
-  if (JoyPadCheck(PAD1_LEFT)) {
+  /*if (JoyPadCheck(PAD1_LEFT)) {
     camera.position.vx -= 50;
   }
   if (JoyPadCheck(PAD1_RIGHT)) {
     camera.position.vx += 50;
   }
   if (JoyPadCheck(PAD1_UP)) {
-    camera.position.vy -= 50;
+    camera.position.vz += 50;
   }
   if (JoyPadCheck(PAD1_DOWN)) {
-    camera.position.vy += 50;
-  }
-  if (JoyPadCheck(PAD1_CROSS)) {
+    camera.position.vz -= 50;
+  }*/
+
+  /*if (JoyPadCheck(PAD1_CROSS)) {
     camera.position.vz += 50;
   }
   if (JoyPadCheck(PAD1_CIRCLE)) {
     camera.position.vz -= 50;
+  }*/
+
+  JoyPadCheckAnalog(0);
+
+  unsigned char Left_Horizontal, Left_Vertical, Right_Horizontal, Right_Vertical;
+  JoyPadGetAnalogState(&Left_Horizontal, &Left_Vertical, &Right_Horizontal, &Right_Vertical);
+  //printf("GUAYO CARECULO : %02x,%02x,%02x,%02x\n", Left_Horizontal, Left_Vertical, Right_Horizontal, Right_Vertical);
+
+  short MoveX = (Left_Horizontal - 128) >> 2;
+  short MoveZ = (Left_Vertical - 128) >> 2;
+  
+  if (abs(MoveX) >= 8)
+  {
+    camera.position.vx += MoveX;
   }
 
+  if (abs(MoveZ) >= 8)
+  {
+    camera.position.vz -= MoveZ;
+  }
+
+  printf("MoveX: %d, MoveY: %d\n", MoveX, MoveZ);
+
+  VECTOR fwd;
+  fwd.vx = 0;
+  fwd.vy = 0;
+  fwd.vz = ONE;
+  fwd.pad = 0;
+
   // Compute the camera Lookat matrix for this frame
-  LookAt(&camera, &camera.position, &object.position, &(VECTOR){0, -ONE, 0});
+  //LookAt(&camera, &camera.position, &object.position, &(VECTOR){0, -ONE, 0});
+  LookAt(&camera, &camera.position, &fwd, &(VECTOR){0, -ONE, 0});
 
   // Draw the object
   RotMatrix(&object.rotation, &worldmat);
