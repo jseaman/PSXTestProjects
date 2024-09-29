@@ -11,6 +11,7 @@
 #include "utils.h"
 #include "sound.h"
 #include "libcd.h"
+#include "trig_lut.h"
 
 extern char __heap_start, __sp;
 
@@ -20,6 +21,7 @@ MATRIX worldmat = {0};
 MATRIX viewmat = {0};
 
 Camera camera;
+short camera_yaw = 0, camera_pitch = 0, camera_roll = 0;
 
 Object object;
 
@@ -113,6 +115,8 @@ void Setup(void) {
   
   InitHeap3((void*)0x801F8000, 0x100000);
 
+  InitTrigTables();
+
   // Initialize Sound
   SoundInit();
 
@@ -144,6 +148,78 @@ void Setup(void) {
   //PlayAudioTrack(2);
 }
 
+short AdjustRotation (short rot)
+{
+  if (rot > ONE)
+    {
+      rot -= ONE;
+    }
+    else if (rot < 0)
+    {
+      rot += ONE;
+    }
+
+  return rot;
+}
+
+void MoveCamera(VECTOR *fwd)
+{
+  unsigned char Left_Horizontal, Left_Vertical, Right_Horizontal, Right_Vertical;
+  JoyPadGetAnalogState(&Left_Horizontal, &Left_Vertical, &Right_Horizontal, &Right_Vertical);
+
+  short MoveYaw = (Right_Horizontal - 128) >> 3;
+
+  if (abs(MoveYaw) >= 8)
+  {
+    camera_yaw += MoveYaw;
+    camera_yaw = AdjustRotation(camera_yaw);
+  }
+
+  short MovePitch = (Right_Vertical - 128) >> 3;
+
+  if (abs(MovePitch) >= 8)
+  {
+    camera_pitch -= MovePitch;
+    camera_pitch = AdjustRotation(camera_pitch);
+  }
+
+  short sinx = sin_lut(camera_pitch);
+  short cosx = cos_lut(camera_pitch);
+  short siny = sin_lut(camera_yaw);
+  short cosy = cos_lut(camera_yaw);
+  short sinz = sin_lut(camera_roll);
+  short cosz = cos_lut(camera_roll);
+
+  fwd->vx = (siny * cosx) >> 12;
+  fwd->vy = (-sinx);
+  fwd->vz = (cosy * cosx) >> 12;
+  fwd->pad = 0;
+
+  //printf("Camera Yaw: %d, Forward: (%d, %d, %d)\n", camera_yaw, fwd.vx, fwd.vy, fwd.vz);
+
+  VECTOR right;
+  right.vx = ((cosx * cosz) >> 12) + ((((siny * sinx) >> 12) * sinz) >> 12);
+  right.vy = (cosx * sinz) >> 12;
+  right.vz = ((-siny * cosz) >> 12) + ((((cosy * sinx) >> 12) * sinz) >> 12);
+
+  short MoveX = (Left_Horizontal - 128) >> 2;
+  short MoveZ = (Left_Vertical - 128) >> 2;
+  
+  if (abs(MoveX) >= 8)
+  {
+    camera.position.vx += (right.vx * MoveX) >> 12;
+    camera.position.vy += (right.vy * MoveX) >> 12;
+    camera.position.vz += (right.vz * MoveX) >> 12;
+  }
+
+  if (abs(MoveZ) >= 8)
+  {
+    camera.position.vx -= (fwd->vx * MoveZ) >> 12;
+    camera.position.vy -= (fwd->vy * MoveZ) >> 12;
+    camera.position.vz -= (fwd->vz * MoveZ) >> 12;
+  }
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // Setup function that is called once at the beginning of the execution
 ///////////////////////////////////////////////////////////////////////////////
@@ -157,53 +233,10 @@ void Update(void) {
 
   // Update the state of the controller
   JoyPadUpdate();
-
-  /*if (JoyPadCheck(PAD1_LEFT)) {
-    camera.position.vx -= 50;
-  }
-  if (JoyPadCheck(PAD1_RIGHT)) {
-    camera.position.vx += 50;
-  }
-  if (JoyPadCheck(PAD1_UP)) {
-    camera.position.vz += 50;
-  }
-  if (JoyPadCheck(PAD1_DOWN)) {
-    camera.position.vz -= 50;
-  }*/
-
-  /*if (JoyPadCheck(PAD1_CROSS)) {
-    camera.position.vz += 50;
-  }
-  if (JoyPadCheck(PAD1_CIRCLE)) {
-    camera.position.vz -= 50;
-  }*/
-
   JoyPadCheckAnalog(0);
 
-  unsigned char Left_Horizontal, Left_Vertical, Right_Horizontal, Right_Vertical;
-  JoyPadGetAnalogState(&Left_Horizontal, &Left_Vertical, &Right_Horizontal, &Right_Vertical);
-  //printf("GUAYO CARECULO : %02x,%02x,%02x,%02x\n", Left_Horizontal, Left_Vertical, Right_Horizontal, Right_Vertical);
-
-  short MoveX = (Left_Horizontal - 128) >> 2;
-  short MoveZ = (Left_Vertical - 128) >> 2;
-  
-  if (abs(MoveX) >= 8)
-  {
-    camera.position.vx += MoveX;
-  }
-
-  if (abs(MoveZ) >= 8)
-  {
-    camera.position.vz -= MoveZ;
-  }
-
-  printf("MoveX: %d, MoveY: %d\n", MoveX, MoveZ);
-
   VECTOR fwd;
-  fwd.vx = 0;
-  fwd.vy = 0;
-  fwd.vz = ONE;
-  fwd.pad = 0;
+  MoveCamera(&fwd);
 
   // Compute the camera Lookat matrix for this frame
   //LookAt(&camera, &camera.position, &object.position, &(VECTOR){0, -ONE, 0});

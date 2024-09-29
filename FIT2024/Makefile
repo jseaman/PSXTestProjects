@@ -10,7 +10,8 @@ SRC/globals.c \
 SRC/joypad.c \
 SRC/object.c \
 SRC/sound.c \
-SRC/utils.c
+SRC/utils.c \
+SRC/trig_lut.c
 
 CPPFLAGS += -Ithird_party/psyq-iwyu/include
 LDFLAGS += -Lthird_party/psyq/lib
