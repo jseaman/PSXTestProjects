@@ -7,12 +7,7 @@
 
 #define VIDEO_MODE 0
 #define SCREEN_RES_X 320
-
-#ifdef USE_PAL_MODE
-  #define SCREEN_RES_Y 256
-#else
-  #define SCREEN_RES_Y 240
-#endif
+#define SCREEN_RES_Y 256
 
 #define SCREEN_CENTER_X (SCREEN_RES_X >> 1)
 #define SCREEN_CENTER_Y (SCREEN_RES_Y >> 1)

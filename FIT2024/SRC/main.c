@@ -164,6 +164,13 @@ short AdjustRotation (short rot)
 
 void MoveCamera(VECTOR *fwd)
 {
+  if (!IsJoyPadAnalog(0))
+  {
+    fwd->vx = fwd->vy = 0;
+    fwd->vz = ONE;
+    return;
+  }
+
   unsigned char Left_Horizontal, Left_Vertical, Right_Horizontal, Right_Vertical;
   JoyPadGetAnalogState(&Left_Horizontal, &Left_Vertical, &Right_Horizontal, &Right_Vertical);
 

@@ -219,3 +219,8 @@ int JoyPadCheckAnalog(int port)
   return setPad(port,padbuff[port]);
 }
 
+char IsJoyPadAnalog(int port)
+{
+	return PadInfoMode(port,InfoModeCurID,0) == 7;
+}
+

@@ -20,12 +20,28 @@ void ScreenInit(void) {
     GsInitGraph(320, 256, GsINTER|GsOFSGPU, 1, 0);
 
     // Set the display area of the first buffer
-    SetDefDispEnv(&screen.disp[0], 0,   0, 320, 256);
-    SetDefDrawEnv(&screen.draw[0], 0, 256, 320, 256);
+    SetDefDispEnv(&screen.disp[0], 0,   0, SCREEN_RES_X, SCREEN_RES_Y);
+    SetDefDrawEnv(&screen.draw[0], 0, SCREEN_RES_Y, SCREEN_RES_X, SCREEN_RES_Y);
 
     // Set the display area of the second buffer
-    SetDefDispEnv(&screen.disp[1], 0, 256, 320, 256);
-    SetDefDrawEnv(&screen.draw[1], 0,   0, 320, 256);
+    SetDefDispEnv(&screen.disp[1], 0, SCREEN_RES_Y, SCREEN_RES_X, SCREEN_RES_Y);
+    SetDefDrawEnv(&screen.draw[1], 0,   0, SCREEN_RES_X, SCREEN_RES_Y);
+
+    screen.disp[0].isinter = 1;
+    screen.disp[1].isinter = 1;
+
+    screen.draw[0].dfe = 1;
+    screen.draw[1].dfe = 1;
+
+    screen.disp[0].screen.y = 16;
+    screen.disp[0].screen.x = 0;
+    screen.disp[0].screen.w = 256;
+    screen.disp[0].screen.h = 256;
+
+    screen.disp[1].screen.y = 16;
+    screen.disp[1].screen.x = 0;
+    screen.disp[1].screen.w = 256;
+    screen.disp[1].screen.h = 256;
   #else
     // Set the display area of the first buffer
     SetDefDispEnv(&screen.disp[0], 0,   0, SCREEN_RES_X, SCREEN_RES_Y);
