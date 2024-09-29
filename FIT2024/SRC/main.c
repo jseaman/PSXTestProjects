@@ -113,7 +113,7 @@ void LoadModel(char *filename) {
 void Setup(void) {
   // Init Heap
   
-  InitHeap3((void*)0x801F8000, 0x100000);
+  InitHeap3((unsigned long *)&__heap_start, (&__sp - 0x5000) - &__heap_start);
 
   InitTrigTables();
 
