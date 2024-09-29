@@ -144,8 +144,7 @@ void Setup(void) {
   LoadModel("\\MODEL.BIN;1");
   LoadTexture("\\FIT64_4.TIM;1");
 
-  // Restore Audio Later
-  //PlayAudioTrack(2);
+  PlayAudioTrack(2);
 }
 
 short AdjustRotation (short rot)

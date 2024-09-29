@@ -24,5 +24,8 @@
     </directory_tree>
   </track>
   <track type="audio" source=".\ASSETS\MUSIC\TERMINAL.WAV"/>
+  <track type="audio" source=".\ASSETS\MUSIC\SHADOWS.WAV"/>
+  <track type="audio" source=".\ASSETS\MUSIC\DRAGON.WAV"/>
+  <track type="audio" source=".\ASSETS\MUSIC\COURSE.WAV"/>
   <track type="audio" source=".\ASSETS\MUSIC\WIRED.WAV"/>
 </iso_project>
